@@ -1,7 +1,10 @@
 'use strict'
 
-import { app, BrowserWindow, protocol } from 'electron'
+import { app, BrowserWindow, ipcMain, protocol } from 'electron'
+import path from 'path'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+import { startPrint } from './electron-print-preview/dist/print/index'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -9,18 +12,27 @@ protocol.registerSchemesAsPrivileged([
     { scheme: 'app', privileges: { secure: true, standard: true }}
 ])
 
+let icon = null
+if (process.env.WEBPACK_DEV_SERVER_URL) {
+    icon = path.join(__dirname, '../public/icon.png')
+} else {
+    icon = path.join(process.cwd(), '/resources/icon.png')
+}
+
 async function createWindow() {
     // Create the browser window.
     const win = new BrowserWindow({
         width: 1920,
         height: 1080,
         show: false,
+        icon: icon,
         webPreferences: {
-
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-            nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-            contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+            // nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+            // contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+            preload: path.join(__dirname, 'preload.js')
+            // nativeWindowOpen: true // 拦截 new-window 事件
         }
     })
     win.center()
@@ -41,6 +53,17 @@ async function createWindow() {
             }
             // childWin.hide()
         }, 500)
+
+        ipcMain.on('print', async (event, html) => {
+            const win = BrowserWindow.getFocusedWindow()
+            if (!win) return
+
+            try {
+                startPrint({ htmlString: html }, null)
+            } catch (error) {
+                console.error('Error during print:', error)
+            }
+        })
     })
     if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

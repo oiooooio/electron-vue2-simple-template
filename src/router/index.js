@@ -34,16 +34,6 @@ import Layout from '@/layout'
  */
 export const constantRoutes = [
     {
-        path: '/404',
-        component: () => import('@/views/error-page/404'),
-        hidden: true
-    },
-    {
-        path: '/401',
-        component: () => import('@/views/error-page/401'),
-        hidden: true
-    },
-    {
         path: '/',
         component: Layout,
         redirect: '/dashboard',
@@ -55,67 +45,17 @@ export const constantRoutes = [
                 meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
             }
         ]
+    },
+    {
+        path: '/404',
+        component: () => import('@/views/error-page/404'),
+        hidden: true
+    },
+    {
+        path: '/401',
+        component: () => import('@/views/error-page/401'),
+        hidden: true
     }
-]
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
-    {
-        path: '/icon',
-        component: Layout,
-        children: [
-            {
-                path: 'index',
-                component: () => import('@/views/icons/index'),
-                name: 'Icons',
-                meta: { title: 'Icons', icon: 'icon', noCache: true }
-            }
-        ]
-    },
-
-    {
-        path: '/error',
-        component: Layout,
-        redirect: 'noRedirect',
-        name: 'ErrorPages',
-        meta: {
-            title: 'Error Pages',
-            icon: '404'
-        },
-        children: [
-            {
-                path: '401',
-                component: () => import('@/views/error-page/401'),
-                name: 'Page401',
-                meta: { title: '401', noCache: true }
-            },
-            {
-                path: '404',
-                component: () => import('@/views/error-page/404'),
-                name: 'Page404',
-                meta: { title: '404', noCache: true }
-            }
-        ]
-    },
-
-    {
-        path: '/error-log',
-        component: Layout,
-        children: [
-            {
-                path: 'log',
-                component: () => import('@/views/error-log/index'),
-                name: 'ErrorLog',
-                meta: { title: 'Error Log', icon: 'bug' }
-            }
-        ]
-    },
-
-    // 404 page must be placed at the end !!!
-    { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
@@ -131,5 +71,7 @@ export function resetRouter() {
     const newRouter = createRouter()
     router.matcher = newRouter.matcher // reset router
 }
+
+router.addRoutes(constantRoutes)
 
 export default router

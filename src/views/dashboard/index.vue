@@ -1,31 +1,29 @@
 <template>
-  <div class="dashboard-container">
-    <component :is="currentRole" />
-  </div>
+    <div class="dashboard-container">
+        <button @click="onPrintText">打印测试-文本</button>
+    </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import adminDashboard from './admin'
-import editorDashboard from './editor'
 
 export default {
-  name: 'Dashboard',
-  components: { adminDashboard, editorDashboard },
-  data() {
-    return {
-      currentRole: 'adminDashboard'
+    name: 'Dashboard',
+    components: {  },
+    data() {
+        return {
+        }
+    },
+    computed: {
+
+    },
+    created() {
+
+    },
+
+    methods: {
+        onPrintText() {
+            window.electronAPI.print('11111111111111111111')
+        }
     }
-  },
-  computed: {
-    ...mapGetters([
-      'roles'
-    ])
-  },
-  created() {
-    if (!this.roles.includes('admin')) {
-      this.currentRole = 'editorDashboard'
-    }
-  }
 }
 </script>
