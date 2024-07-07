@@ -1,9 +1,10 @@
 'use strict'
 
 import { app, BrowserWindow, ipcMain, protocol } from 'electron'
-import path from 'path'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { startPrint } from './electron-print-preview/dist/print/index'
+const path = require('path')
+const fs = require('fs')
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -17,6 +18,20 @@ if (process.env.WEBPACK_DEV_SERVER_URL) {
     icon = path.join(__dirname, '../public/icon.png')
 } else {
     icon = path.join(process.cwd(), '/resources/icon.png')
+}
+
+function readTestWebPage() {
+    // 构建文件路径
+    const filePath = path.join(__dirname, 'test', 'print-test-page.html')
+
+    // 读取文件内容
+    let fileContent
+    try {
+        fileContent = fs.readFileSync(filePath, 'utf-8')
+        return fileContent
+    } catch (err) {
+        console.error('Error reading file:', err)
+    }
 }
 
 async function createWindow() {
@@ -59,6 +74,18 @@ async function createWindow() {
             if (!win) return
 
             try {
+                startPrint({ htmlString: html }, null)
+            } catch (error) {
+                console.error('Error during print:', error)
+            }
+        })
+
+        ipcMain.on('print-test-web-page', async (event) => {
+            const win = BrowserWindow.getFocusedWindow()
+            if (!win) return
+
+            try {
+                const html = readTestWebPage()
                 startPrint({ htmlString: html }, null)
             } catch (error) {
                 console.error('Error during print:', error)

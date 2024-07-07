@@ -6,7 +6,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     print: (html) => {
         ipcRenderer.send('print', html)
+    },
+
+    printWebTestPage: () => {
+        ipcRenderer.send('print-test-web-page')
     }
 })
 
-console.log('preload.js')

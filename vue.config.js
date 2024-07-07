@@ -48,8 +48,8 @@ module.exports = {
         }
     },
     chainWebpack(config) {
-    // it can improve the speed of the first screen, it is recommended to turn on preload
-    // it can improve the speed of the first screen, it is recommended to turn on preload
+        // it can improve the speed of the first screen, it is recommended to turn on preload
+        // it can improve the speed of the first screen, it is recommended to turn on preload
         config.plugin('preload').tap(() => [
             {
                 rel: 'preload',
@@ -140,7 +140,8 @@ module.exports = {
             mainProcessWatch: ['src/background.js'],
             builderOptions: {
                 extraFiles: [
-                    { from: 'public/favicon.png', to: 'resources/favicon.png' }
+                    { from: 'public/favicon.png', to: 'resources/favicon.png' },
+                    { from: 'src/test/print-test-page.html', to: 'test/print-test-page.html' }
                 ]
             }
         }
